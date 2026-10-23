@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>orbita</title>
+    <link rel="stylesheet" href="app.css?v=11" />
+  </head>
+  <body>
+    <canvas id="sky"></canvas>
+
+    <header class="topbar">
+      <button class="icon-btn" id="menu-btn" type="button" aria-label="메뉴">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" />
+        </svg>
+      </button>
+      <a class="header-brand logo-stage" id="header-logo" data-orbita-logo="header" data-fit-w="640" data-fit-h="220" href="#" aria-label="orbita"></a>
+      <div class="search-wrap">
+        <label class="search">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path
+              d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+            />
+          </svg>
+          <input id="search" type="search" placeholder="Search..." autocomplete="off" />
+        </label>
+        <ul class="suggest" id="suggest" hidden></ul>
+      </div>
+      <div class="observe-wrap">
+        <button class="observe-btn" id="observe-btn" type="button">
+          OBSERVE
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M7 10l5 5 5-5H7z" />
+          </svg>
+        </button>
+        <div class="observe-menu" id="observe-menu" hidden>
+          <button type="button" data-panel="pollution">빛 공해</button>
+          <button type="button" data-panel="ranking">잘 보이는 별자리</button>
+          <button type="button" data-panel="observe">내 관측</button>
+        </div>
+      </div>
+    </header>
+
+    <aside class="drawer" id="drawer" hidden>
+      <div class="drawer-brand">
+        <div class="logo-stage drawer-logo" id="drawer-logo" data-orbita-logo="drawer" data-fit-w="560" data-fit-h="240"></div>
+        <p>밤하늘 관측 시뮬레이터</p>
+      </div>
+      <nav class="drawer-nav">
+        <button type="button" data-panel="settings">
+          <span class="nav-ico">⚙</span> View Settings
+        </button>
+        <button type="button" data-panel="ranking">
+          <span class="nav-ico">◉</span> Planets Tonight
+        </button>
+      </nav>
+      <div class="drawer-foot">
+        <button type="button" data-panel="about">About</button>
+        <button type="button">Privacy</button>
+        <button type="button">Data Credits</button>
+      </div>
+    </aside>
+    <div class="scrim" id="scrim" hidden></div>
+
+    <div class="horizon-n" id="horizon-n" hidden>N</div>
+    <div class="fov" id="fov">FOV 90.0°</div>
+    <div class="obj-label" id="obj-label" hidden></div>
+    <div class="loc-chip" id="loc-chip">위치 없음 · 미리보기 하늘</div>
+    <button class="pollution-hud" id="pollution-hud" type="button" aria-label="빛 공해">
+      <div class="ph-row">
+        <span class="ph-kicker">빛 공해</span>
+        <span class="ph-bortle" id="ph-bortle">Bortle —</span>
+      </div>
+      <strong class="ph-label" id="ph-label">위치 대기</strong>
+      <div class="ph-meter"><i id="meter-fill"></i></div>
+      <ol class="ph-ticks" id="ph-ticks" aria-hidden="true"></ol>
+      <p class="ph-meta" id="ph-meta">GPS를 허용하면 이 하늘 기준으로 정도를 계산합니다.</p>
+    </button>
+    <div class="gps-toast" id="gps-toast" hidden></div>
+
+    <div class="look-bar">
+      <button type="button" data-az="270" title="서쪽">W</button>
+      <div class="az-tape-wrap">
+        <canvas id="az-tape"></canvas>
+        <div class="az-caret"></div>
+        <span id="az-readout">N 0°</span>
+      </div>
+      <button type="button" data-az="90" title="동쪽">E</button>
+    </div>
+    <div class="look-snaps">
+      <button type="button" data-az="0">N</button>
+      <button type="button" data-az="180">S</button>
+    </div>
+
+    <div class="bottombar">
+      <button class="loc-pill" id="loc-btn" type="button" aria-label="위치">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+          <path
+            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"
+          />
+        </svg>
+        <span id="loc-label">위치 없음</span>
+      </button>
+      <div class="toggles">
+        <button class="toggle on" data-flag="constellations" type="button" title="Constellations">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7">
+            <circle cx="5" cy="18" r="1.4" fill="currentColor" />
+            <circle cx="12" cy="6" r="1.4" fill="currentColor" />
+            <circle cx="19" cy="16" r="1.4" fill="currentColor" />
+            <path d="M5 18l7-12 7 10" />
+          </svg>
+        </button>
+        <button class="toggle" data-flag="art" type="button" title="Constellations Art">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
+            <path d="M12 3l1.8 5.4H19l-4.4 3.2 1.7 5.4L12 13.8 7.7 17l1.7-5.4L5 8.4h5.2z" />
+          </svg>
+        </button>
+        <button class="toggle on" data-flag="atmosphere" type="button" title="Atmosphere">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
+            <path d="M6.5 18h11a4 4 0 0 0 .4-8 5.5 5.5 0 0 0-10.4-1.5A3.5 3.5 0 0 0 6.5 18z" />
+          </svg>
+        </button>
+        <button class="toggle on" data-flag="landscape" type="button" title="Landscape">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
+            <circle cx="8" cy="9" r="2.2" />
+            <circle cx="12" cy="8" r="2.6" />
+            <circle cx="16" cy="9.2" r="2.1" />
+            <path d="M4 20c1.5-4 4-6 8-6s6.5 2 8 6H4z" />
+          </svg>
+        </button>
+        <button class="toggle" data-flag="azGrid" type="button" title="Azimuthal Grid">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="8" />
+            <path d="M12 4v16M4 12h16M6.2 6.2l11.6 11.6M17.8 6.2 6.2 17.8" />
+          </svg>
+        </button>
+        <button class="toggle" data-flag="eqGrid" type="button" title="Equatorial Grid">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5">
+            <ellipse cx="12" cy="12" rx="9" ry="5" />
+            <ellipse cx="12" cy="12" rx="9" ry="8.5" />
+            <path d="M12 3.5v17" />
+          </svg>
+        </button>
+        <button class="toggle on" data-flag="dso" type="button" title="Deep Sky Objects">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
+            <path d="M12 4c3 2.4 5 5.2 5 8s-2 5.6-5 8c-3-2.4-5-5.2-5-8s2-5.6 5-8zm0 5a3 3 0 1 0 .01 6A3 3 0 0 0 12 9z" />
+          </svg>
+        </button>
+        <button class="toggle" data-flag="night" type="button" title="Night Mode">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7">
+            <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" />
+            <circle cx="12" cy="12" r="3" fill="currentColor" />
+          </svg>
+        </button>
+      </div>
+      <button class="time-pill" id="time-btn" type="button" aria-label="시간">
+        <span id="time-label">
+          <strong id="time-clock">00:00:00</strong>
+          <small id="time-date">2026-09-22</small>
+        </span>
+      </button>
+    </div>
+
+    <section class="panel" id="panel-loc" hidden>
+      <h3>위치</h3>
+      <p class="city" id="city-name">위치 확인 중…</p>
+      <p class="muted" id="coords">기기 GPS를 사용합니다</p>
+      <p class="pollution" id="loc-pollution">빛 공해 · 위치 대기</p>
+      <button class="locate-btn" id="relocate-btn" type="button">현재 위치 다시 찾기</button>
+    </section>
+
+    <section class="panel panel-right" id="panel-time" hidden>
+      <h3>시간</h3>
+      <p class="clock" id="clock">00:00:00</p>
+      <p class="muted" id="date-line">2026-09-21</p>
+      <div class="time-controls">
+        <button type="button" id="time-rew">« −1h</button>
+        <button type="button" id="time-pause">Pause</button>
+        <button type="button" id="time-1x">1×</button>
+        <button type="button" id="time-fast">60×</button>
+        <button type="button" id="time-fwd">+1h »</button>
+        <button type="button" id="time-now">Now</button>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-observe" hidden>
+      <h3>내 관측</h3>
+      <p class="muted" id="pick-info" hidden>
+        <strong id="pick-name"></strong>
+        <span id="pick-meta"></span>
+      </p>
+      <p class="muted">하늘을 클릭하면 별·행성을 식별합니다. 검색으로 별자리로 이동합니다.</p>
+    </section>
+
+    <section class="panel" id="panel-pollution" hidden>
+      <h3>빛 공해</h3>
+      <p class="bortle-big" id="bortle-big">Bortle —</p>
+      <p class="pollution" id="pollution-mini">빛 공해 · 위치 대기</p>
+      <div class="meter"><span id="meter-fill-panel"></span></div>
+      <p id="pollution-text">현재 위치를 받으면 이 하늘 기준으로 빛 공해를 표시합니다.</p>
+      <ul class="bortle-legend" id="bortle-legend"></ul>
+    </section>
+
+    <section class="panel" id="panel-ranking" hidden>
+      <h3>지금 잘 보이는 별자리</h3>
+      <ol class="rank" id="rank-list"></ol>
+    </section>
+
+    <section class="panel" id="panel-about" hidden>
+      <h3>orbita</h3>
+      <p>촬영한 하늘과 보이는 별자리로 빛 공해를 가늠하고, 지금 하늘에서 가장 잘 보이는 별자리를 알려 주는 관측 시뮬레이터입니다.</p>
+    </section>
+
+    <div id="intro">
+      <div id="stage">
+        <img data-orbit class="orbit" src="orbit.png" alt="" />
+        <img data-letter="o" class="letter letter-o" src="O.png" alt="" />
+        <img data-letter="r" class="letter letter-r" src="R.png" alt="" />
+        <img data-letter="b" class="letter letter-b" src="B.png" alt="" />
+        <img data-letter="i" class="letter letter-i" src="I.png" alt="" />
+        <img data-letter="t" class="letter letter-t" src="T.png" alt="" />
+        <img data-letter="a" class="letter letter-a" src="A.png" alt="" />
+      </div>
+      <button id="replay" type="button">다시 보기</button>
+      <button id="skip" type="button">Skip</button>
+    </div>
+
+    <script src="catalog.js?v=1"></script>
+    <script src="sky.js?v=13"></script>
+    <script src="logo.js?v=16"></script>
+    <script src="app.js?v=11"></script>
+  </body>
+</html>
