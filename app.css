@@ -753,3 +753,283 @@ body {
 
 #replay { right: 24px; }
 #skip { right: 124px; }
+
+#intel {
+  position: fixed;
+  z-index: 24;
+  top: 52px;
+  left: 0;
+  bottom: 0;
+  width: min(980px, 100%);
+  display: flex;
+  flex-direction: column;
+  background: rgba(14, 16, 28, 0.94);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+#intel.intel-nav {
+  width: min(420px, 100%);
+}
+
+#intel[hidden] {
+  display: none !important;
+}
+
+.intel-bar,
+.intel-tabs,
+.intel-tools,
+.intel-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.intel-bar,
+.intel-tabs,
+.intel-disclaimer {
+  padding: 8px 14px 0;
+}
+
+.intel-flow,
+.intel-disclaimer,
+.intel-note,
+.intel-place,
+.intel-lead {
+  color: #9aa3bd;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.intel-bar {
+  justify-content: space-between;
+}
+
+.intel-tabs button,
+.intel-row button,
+.intel-tools button,
+.check,
+.file-btn,
+#intel-close {
+  border: 0;
+  border-radius: 8px;
+  padding: 7px 10px;
+  background: #34384c;
+  color: #e8eaf2;
+  font: 12px/1.3 inherit;
+  cursor: pointer;
+}
+
+.intel-tabs button.on,
+.check.on,
+.week button.on,
+.intel-list li.on {
+  background: #4d5678;
+}
+
+.intel-tabs {
+  padding-bottom: 8px;
+}
+
+.intel-disclaimer {
+  margin: 0;
+}
+
+#intel-body {
+  overflow: auto;
+  padding: 8px 14px 24px;
+}
+
+.intel-tools {
+  margin-bottom: 8px;
+}
+
+.intel-tools label,
+.checks label,
+.stack {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #c5c9d8;
+}
+
+.intel-tools input,
+.intel-tools select,
+.checks select,
+.mission textarea,
+.mission-targets textarea {
+  border: 0;
+  border-radius: 8px;
+  padding: 6px 8px;
+  background: #252838;
+  color: #e8eaf2;
+  font: 13px/1.3 inherit;
+}
+
+.intel-split {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.9fr) minmax(240px, 1.1fr);
+  gap: 12px;
+}
+
+.intel-list,
+.mission-index,
+.hop-steps,
+.mission-targets,
+.intel-reasons,
+.score-parts {
+  display: grid;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+}
+
+.intel-list li,
+.mission-index li,
+.hop-steps li,
+.mission-targets li {
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.intel-list button,
+.mission-index button,
+.hop-steps button,
+.matrix th button {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.intel-list span,
+.mission-index span,
+.hop-steps span,
+.mission-targets header span {
+  display: block;
+  color: #9aa3bd;
+  font-size: 12px;
+}
+
+#alt-chart {
+  width: 100%;
+  display: block;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.week {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.week button {
+  border: 0;
+  border-radius: 8px;
+  padding: 6px;
+  background: #252838;
+  color: #e8eaf2;
+  cursor: pointer;
+  font: 11px/1.2 inherit;
+}
+
+.week button b,
+.week button span {
+  display: block;
+}
+
+.matrix-wrap {
+  overflow: auto;
+  max-height: 46vh;
+  margin: 8px 0;
+}
+
+.matrix {
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.matrix th,
+.matrix td {
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.matrix thead th,
+.matrix tbody th {
+  position: sticky;
+  background: #1a1d2c;
+  padding: 6px;
+  white-space: nowrap;
+}
+
+.matrix thead th {
+  top: 0;
+  z-index: 1;
+}
+
+.matrix tbody th {
+  left: 0;
+}
+
+.cell {
+  width: 46px;
+  height: 28px;
+  border: 0;
+  cursor: pointer;
+  color: #161820;
+  font: 12px/1 inherit;
+}
+
+.cell.good { background: #7dcea0; }
+.cell.mid { background: #e2c15a; }
+.cell.low { background: #d9896a; }
+.cell.down { background: #2a2e3d; color: #8b90a3; }
+
+.hop-steps li.on,
+.mission-index li.on {
+  outline: 1px solid rgba(240, 195, 106, 0.7);
+}
+
+.checks,
+.mission-targets header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.mission textarea,
+.mission-targets textarea {
+  width: 100%;
+  min-height: 52px;
+  margin-top: 6px;
+}
+
+.stack {
+  display: grid;
+  margin: 8px 0;
+}
+
+.intel-empty {
+  padding: 12px 0;
+  line-height: 1.5;
+}
+
+@media (max-width: 800px) {
+  #intel,
+  #intel.intel-nav {
+    width: 100%;
+  }
+
+  .intel-split {
+    grid-template-columns: 1fr;
+  }
+}

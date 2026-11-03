@@ -38,6 +38,10 @@
           <button type="button" data-panel="pollution">빛 공해</button>
           <button type="button" data-panel="ranking">잘 보이는 별자리</button>
           <button type="button" data-panel="observe">내 관측</button>
+          <button type="button" data-intel="forecast">Forecast · 언제</button>
+          <button type="button" data-intel="matrix">Matrix · 무엇을</button>
+          <button type="button" data-intel="navigator">Navigator · 어떻게</button>
+          <button type="button" data-intel="mission">Mission · 기록</button>
         </div>
       </div>
     </header>
@@ -48,11 +52,17 @@
         <p>밤하늘 관측 시뮬레이터</p>
       </div>
       <nav class="drawer-nav">
-        <button type="button" data-panel="settings">
-          <span class="nav-ico">⚙</span> View Settings
+        <button type="button" data-intel="forecast">
+          <span class="nav-ico">◷</span> Forecast
         </button>
-        <button type="button" data-panel="ranking">
-          <span class="nav-ico">◉</span> Planets Tonight
+        <button type="button" data-intel="matrix">
+          <span class="nav-ico">▦</span> Visibility Matrix
+        </button>
+        <button type="button" data-intel="navigator">
+          <span class="nav-ico">➝</span> Star Navigator
+        </button>
+        <button type="button" data-intel="mission">
+          <span class="nav-ico">☑</span> Mission Control
         </button>
       </nav>
       <div class="drawer-foot">
@@ -210,6 +220,7 @@
     <section class="panel" id="panel-about" hidden>
       <h3>orbita</h3>
       <p>촬영한 하늘과 보이는 별자리로 빛 공해를 가늠하고, 지금 하늘에서 가장 잘 보이는 별자리를 알려 주는 관측 시뮬레이터입니다.</p>
+      <p>Forecast, Matrix, Navigator, Mission은 메뉴와 OBSERVE에서 엽니다. 고도와 점수는 근사 계산입니다.</p>
     </section>
 
     <div id="intro">
@@ -226,9 +237,30 @@
       <button id="skip" type="button">Skip</button>
     </div>
 
+    <div id="intel" hidden>
+      <div class="intel-bar">
+        <p class="intel-flow">Forecast → Matrix → Navigator → Mission</p>
+        <button id="intel-close" type="button">닫기</button>
+      </div>
+      <div class="intel-tabs">
+        <button type="button" data-tab="forecast">Forecast</button>
+        <button type="button" data-tab="matrix">Matrix</button>
+        <button type="button" data-tab="navigator">Navigator</button>
+        <button type="button" data-tab="mission">Mission</button>
+      </div>
+      <p class="intel-disclaimer">
+        고도, 행성·달 위치, 달 위상, 관측 지표는 이 앱의 근사 모델입니다. 천문력과 다를 수 있고, 관측 성공 확률이 아닙니다.
+        Bortle은 장소 유형으로 추정한 값이며 광공해 지도 실측이 아닙니다.
+      </p>
+      <div id="intel-body"></div>
+    </div>
+
     <script src="catalog.js?v=1"></script>
-    <script src="sky.js?v=13"></script>
+    <script src="sky.js?v=14"></script>
+    <script src="engine.js?v=2"></script>
+    <script src="missions.js?v=1"></script>
     <script src="logo.js?v=16"></script>
-    <script src="app.js?v=11"></script>
+    <script src="app.js?v=12"></script>
+    <script src="intel.js?v=2"></script>
   </body>
 </html>

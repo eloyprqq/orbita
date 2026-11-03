@@ -49,6 +49,16 @@ document.querySelectorAll("[data-panel]").forEach((btn) => {
   btn.addEventListener("click", () => openPanel(btn.dataset.panel));
 });
 
+document.querySelectorAll("[data-intel]").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    drawer.hidden = true;
+    scrim.hidden = true;
+    observeMenu.hidden = true;
+    hidePanels();
+    OrbitaIntel.open(btn.dataset.intel);
+  });
+});
+
 document.getElementById("loc-btn").addEventListener("click", () => {
   panels.loc.hidden = !panels.loc.hidden;
   panels.time.hidden = true;
@@ -306,6 +316,7 @@ function setUnlocatedUi() {
   document.getElementById("coords").textContent = "공유하면 실제 위치의 하늘·별자리·빛 공해로 바뀝니다";
   setPollutionUi(null);
   fillRanking();
+  window.dispatchEvent(new CustomEvent("orbita-place"));
 }
 
 function applyLocation(lat, lon, place, source, quiet) {
@@ -326,6 +337,7 @@ function applyLocation(lat, lon, place, source, quiet) {
     const msg = source === "GPS" ? `GPS 연결 · ${place.name} 하늘로 전환` : `위치 연결 · ${place.name}`;
     showGpsToast(msg);
   }
+  window.dispatchEvent(new CustomEvent("orbita-place"));
 }
 
 function movedEnough(lat, lon) {

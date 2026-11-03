@@ -22,6 +22,7 @@ const Sky = (() => {
   let lastTick = performance.now();
   let slew = null;
   let selected = null;
+  let guide = null;
   let dragging = false;
   let velAz = 0;
   let velAlt = 0;
@@ -642,6 +643,49 @@ const Sky = (() => {
         ctx.stroke();
       }
     }
+    drawGuide();
+  }
+
+  function drawGuide() {
+    if (!guide || !loc.located || !guide.steps || !guide.steps.length) return;
+    const pts = guide.steps.map((step) => {
+      const p = projectRaDec(step.ra, step.dec);
+      return p ? { ...step, p } : null;
+    });
+    ctx.save();
+    ctx.lineWidth = 1.6;
+    ctx.setLineDash([6, 5]);
+    ctx.strokeStyle = "rgba(255, 196, 92, 0.9)";
+    ctx.beginPath();
+    let pen = false;
+    pts.forEach((node) => {
+      if (!node) {
+        pen = false;
+        return;
+      }
+      if (!pen) {
+        ctx.moveTo(node.p.x, node.p.y);
+        pen = true;
+      } else ctx.lineTo(node.p.x, node.p.y);
+    });
+    ctx.stroke();
+    ctx.setLineDash([]);
+    pts.forEach((node, i) => {
+      if (!node) return;
+      const current = i === guide.index;
+      const target = i === pts.length - 1;
+      ctx.beginPath();
+      ctx.arc(node.p.x, node.p.y, current ? 16 : 8, 0, Math.PI * 2);
+      ctx.lineWidth = current ? 2.4 : 1.2;
+      ctx.strokeStyle = target ? "rgba(150, 214, 255, 0.95)" : "rgba(255, 210, 120, 0.95)";
+      ctx.stroke();
+      if (current || target) {
+        ctx.fillStyle = "rgba(255, 244, 220, 0.95)";
+        ctx.font = "12px Segoe UI, sans-serif";
+        ctx.fillText(`${i + 1}. ${node.name}`, node.p.x + 12, node.p.y - 10);
+      }
+    });
+    ctx.restore();
   }
 
   function loop() {
@@ -853,18 +897,38 @@ const Sky = (() => {
   window.addEventListener("resize", resize);
   loop();
 
+  function altAzAt(ra, dec, date) {
+    const decR = (dec * Math.PI) / 180;
+    const p = raDecToAltAz(ra, dec, date, Math.sin(decR), Math.cos(decR));
+    let az = (p.az * 180) / Math.PI;
+    if (az < 0) az += 360;
+    return { alt: (p.alt * 180) / Math.PI, az };
+  }
+
   return {
     setFlag,
     setLocation,
     clearLocation,
     isLocated: () => loc.located,
     getBortle: () => loc.bortle,
+    getPlace: () => ({
+      lat: (loc.lat * 180) / Math.PI,
+      lon: (loc.lon * 180) / Math.PI,
+      bortle: loc.bortle,
+      located: loc.located,
+    }),
     magLimit,
     visibleRanking,
     search,
     pick,
     lookAz,
     headingDeg,
+    altAzAt,
+    bodiesAt: planets,
+    slewToRaDec: slewTo,
+    setGuide: (next) => {
+      guide = next;
+    },
     now,
     setTimeScale: (s) => {
       timeScale = s;
