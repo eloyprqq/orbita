@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>orbita</title>
-    <link rel="stylesheet" href="app.css?v=14" />
+    <link rel="stylesheet" href="app.css?v=15" />
   </head>
   <body>
     <canvas id="sky"></canvas>
@@ -77,8 +77,13 @@
     </aside>
     <div class="scrim" id="scrim" hidden></div>
 
+    <div id="orient-row">
+      <button type="button" id="orient-btn" aria-pressed="false">노트북 방향</button>
+      <p id="orient-note">화면 뒷면이 향한 하늘을 따라갑니다.</p>
+    </div>
+
     <div id="basic-bar">
-      <p>이 화면이 지금 노트북으로 보는 하늘입니다. 화살표의 왼쪽·오른쪽은 나침반이 아니라 이 화면의 왼쪽·오른쪽입니다.</p>
+      <p>화살표의 왼쪽·오른쪽은 이 화면 기준입니다. 노트북 방향을 켜면 화면 뒷면이 가리키는 하늘이 나옵니다.</p>
       <div id="basic-picks"></div>
     </div>
 
@@ -276,7 +281,8 @@
     <script src="catalog.js?v=1"></script>
     <script src="astronomy.browser.min.js?v=2.1.19"></script>
     <script src="ephemeris.js?v=1"></script>
-    <script src="sky.js?v=17"></script>
+    <script src="sky.js?v=18"></script>
+    <script src="orient.js?v=1"></script>
     <script src="engine.js?v=3"></script>
     <script src="missions.js?v=1"></script>
     <script src="aim.js?v=3"></script>

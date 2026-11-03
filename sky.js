@@ -915,6 +915,15 @@ const Sky = (() => {
     };
   }
 
+  function applyLook(az, alt) {
+    if (dragging) return;
+    slew = null;
+    velAz = 0;
+    velAlt = 0;
+    state.az = wrapAzRad(az);
+    state.alt = Math.max(-0.4, Math.min(Math.PI / 2 - 0.03, alt));
+  }
+
   function setLocation(latDeg, lonDeg, bortle, opts = {}) {
     loc.lat = latDeg * Math.PI / 180;
     loc.lon = lonDeg * Math.PI / 180;
@@ -963,6 +972,8 @@ const Sky = (() => {
     search,
     pick,
     lookAz,
+    applyLook,
+    isDragging: () => dragging,
     headingDeg,
     altAzAt,
     bodiesAt: planets,

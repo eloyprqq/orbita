@@ -1046,6 +1046,45 @@ body {
   color: #1b160c;
 }
 
+#orient-row {
+  position: fixed;
+  z-index: 22;
+  top: 132px;
+  left: 200px;
+  right: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+html[data-mode="expert"] #orient-row {
+  top: 64px;
+}
+
+#orient-btn {
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: rgba(28, 32, 48, 0.92);
+  color: #f2f4fa;
+  font: 13px/1 inherit;
+  cursor: pointer;
+}
+
+#orient-btn.on {
+  background: #f0c36a;
+  color: #1b160c;
+}
+
+#orient-note {
+  margin: 0;
+  color: #d5d9e6;
+  font-size: 13px;
+  line-height: 1.35;
+  text-shadow: 0 1px 8px #000;
+}
+
 #basic-bar {
   position: fixed;
   z-index: 21;
@@ -1141,8 +1180,17 @@ html[data-mode="expert"] #aim-caption {
 }
 
 @media (max-width: 800px) {
+  #orient-row,
   #basic-bar {
     left: 12px;
+  }
+
+  #orient-row {
+    top: 168px;
+    flex-wrap: wrap;
+  }
+
+  #basic-bar {
     flex-direction: column;
     align-items: stretch;
   }
