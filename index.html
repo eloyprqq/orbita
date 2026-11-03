@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-mode="basic">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>orbita</title>
-    <link rel="stylesheet" href="app.css?v=11" />
+    <link rel="stylesheet" href="app.css?v=13" />
   </head>
   <body>
     <canvas id="sky"></canvas>
@@ -16,6 +16,10 @@
         </svg>
       </button>
       <a class="header-brand logo-stage" id="header-logo" data-orbita-logo="header" data-fit-w="640" data-fit-h="220" href="#" aria-label="orbita"></a>
+      <div class="mode-switch" role="group" aria-label="사용 모드">
+        <button type="button" id="mode-basic" class="on">기본</button>
+        <button type="button" id="mode-expert">전문가</button>
+      </div>
       <div class="search-wrap">
         <label class="search">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
@@ -23,7 +27,7 @@
               d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
             />
           </svg>
-          <input id="search" type="search" placeholder="Search..." autocomplete="off" />
+          <input id="search" type="search" placeholder="찾을 별 검색" autocomplete="off" />
         </label>
         <ul class="suggest" id="suggest" hidden></ul>
       </div>
@@ -72,6 +76,20 @@
       </div>
     </aside>
     <div class="scrim" id="scrim" hidden></div>
+
+    <div id="basic-bar">
+      <p>찾을 별을 고르세요. 화살표는 노트북 화면 기준으로 그 별이 어느 쪽인지 알려 줍니다.</p>
+      <div id="basic-picks"></div>
+    </div>
+
+    <div id="aim" hidden>
+      <div id="aim-arrow" aria-hidden="true">
+        <svg viewBox="0 0 80 80" width="88" height="88">
+          <path d="M16 40h38M40 18l22 22-22 22" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+      <p id="aim-caption" aria-live="polite"></p>
+    </div>
 
     <div class="horizon-n" id="horizon-n" hidden>N</div>
     <div class="fov" id="fov">FOV 90.0°</div>
@@ -256,11 +274,12 @@
     </div>
 
     <script src="catalog.js?v=1"></script>
-    <script src="sky.js?v=14"></script>
+    <script src="sky.js?v=15"></script>
     <script src="engine.js?v=2"></script>
     <script src="missions.js?v=1"></script>
+    <script src="aim.js?v=2"></script>
     <script src="logo.js?v=16"></script>
-    <script src="app.js?v=12"></script>
+    <script src="app.js?v=13"></script>
     <script src="intel.js?v=2"></script>
   </body>
 </html>

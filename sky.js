@@ -809,9 +809,10 @@ const Sky = (() => {
     return best;
   }
 
-  function search(query) {
+  function search(query, options = {}) {
     const q = query.trim().toLowerCase();
     if (!q) return null;
+    const slew = options.slew !== false;
     const hit =
       starIndex.get(q) ||
       catalogStars.find((s) => s.name.toLowerCase().startsWith(q)) ||
@@ -821,12 +822,46 @@ const Sky = (() => {
     if (!hit) return null;
     if (hit.lines) {
       const s = starIndex.get(hit.lines[0][0].toLowerCase());
-      if (s) slewTo(s.ra, s.dec);
-      return hit;
+      if (!s) return null;
+      if (slew) slewTo(s.ra, s.dec);
+      return { name: hit.ko || hit.name, ra: s.ra, dec: s.dec, kind: "constellation" };
     }
-    slewTo(hit.ra, hit.dec);
+    if (slew) slewTo(hit.ra, hit.dec);
     selected = hit;
     return hit;
+  }
+
+  function directionOf(ra, dec) {
+    const decR = (dec * Math.PI) / 180;
+    const ha = (frame.lst - ra) * 15 * Math.PI / 180;
+    const sinDec = Math.sin(decR);
+    const cosDec = Math.cos(decR);
+    const sinHa = Math.sin(ha);
+    const cosHa = Math.cos(ha);
+    return {
+      x: -cosDec * sinHa,
+      y: sinDec * frame.sinLat + cosDec * frame.cosLat * cosHa,
+      z: sinDec * frame.cosLat - cosDec * frame.sinLat * cosHa,
+    };
+  }
+
+  function screenAim(ra, dec) {
+    const basis = cameraBasis();
+    syncFrame(now(), innerWidth, innerHeight, basis);
+    const d = directionOf(ra, dec);
+    const right = dot(d, basis.r);
+    const up = dot(d, basis.u);
+    const forward = dot(d, basis.f);
+    const w = innerWidth;
+    const h = innerHeight;
+    let x = null;
+    let y = null;
+    if (forward > 0.04) {
+      x = w * 0.5 + (right * frame.fl) / forward;
+      y = h * 0.5 - (up * frame.fl) / forward;
+    }
+    const onScreen = x != null && x >= 0 && x <= w && y >= 0 && y <= h;
+    return { x, y, right, up, forward, onScreen, w, h, below: d.y < -0.02 };
   }
 
   function slewTo(ra, dec) {
@@ -926,6 +961,9 @@ const Sky = (() => {
     altAzAt,
     bodiesAt: planets,
     slewToRaDec: slewTo,
+    screenAim,
+    getSelected: () => selected,
+    getGuide: () => guide,
     setGuide: (next) => {
       guide = next;
     },

@@ -145,9 +145,19 @@ function catalogHits(q) {
 }
 
 function runSearch(q) {
-  Sky.search(q);
+  const basic = document.documentElement.dataset.mode !== "expert";
+  const hit = Sky.search(q, { slew: !basic });
   suggest.hidden = true;
   hidePanels();
+  if (hit && hit.ra != null && window.OrbitaAim) {
+    OrbitaAim.pin({
+      name: hit.name,
+      ra: hit.ra,
+      dec: hit.dec,
+      moving: hit.kind === "planet" || hit.kind === "moon",
+      body: hit.name,
+    });
+  }
 }
 
 searchInput.addEventListener("input", () => {
@@ -480,5 +490,22 @@ document.getElementById("relocate-btn").addEventListener("click", (e) => {
   e.stopPropagation();
   requestLocation();
 });
+
+const modeBasic = document.getElementById("mode-basic");
+const modeExpert = document.getElementById("mode-expert");
+const searchBox = document.getElementById("search");
+
+function applyMode(mode) {
+  const next = mode === "expert" ? "expert" : "basic";
+  document.documentElement.dataset.mode = next;
+  modeBasic.classList.toggle("on", next === "basic");
+  modeExpert.classList.toggle("on", next === "expert");
+  searchBox.placeholder = next === "basic" ? "찾을 별 검색" : "Search...";
+  localStorage.setItem("orbita.mode", next);
+}
+
+modeBasic.addEventListener("click", () => applyMode("basic"));
+modeExpert.addEventListener("click", () => applyMode("expert"));
+applyMode(localStorage.getItem("orbita.mode") || "basic");
 
 requestLocation();

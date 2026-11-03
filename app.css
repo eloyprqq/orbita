@@ -1023,7 +1023,129 @@ body {
   line-height: 1.5;
 }
 
+.mode-switch {
+  display: flex;
+  flex-shrink: 0;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(36, 40, 58, 0.92);
+}
+
+.mode-switch button {
+  border: 0;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: transparent;
+  color: #c5c9d8;
+  font: 12px/1 inherit;
+  cursor: pointer;
+}
+
+.mode-switch button.on {
+  background: #f0c36a;
+  color: #1b160c;
+}
+
+#basic-bar {
+  position: fixed;
+  z-index: 21;
+  top: 60px;
+  left: 200px;
+  right: 12px;
+  display: none;
+  gap: 8px;
+  align-items: center;
+}
+
+html[data-mode="basic"] #basic-bar {
+  display: flex;
+}
+
+#basic-bar p {
+  flex: 0 1 280px;
+  margin: 0;
+  color: #d5d9e6;
+  font-size: 13px;
+  line-height: 1.4;
+  text-shadow: 0 1px 8px #000;
+}
+
+#basic-picks {
+  display: flex;
+  gap: 6px;
+  overflow: auto;
+  padding-bottom: 2px;
+}
+
+#basic-picks button {
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: rgba(28, 32, 48, 0.92);
+  color: #f2f4fa;
+  font: 13px/1 inherit;
+  cursor: pointer;
+}
+
+#basic-picks button.on {
+  background: #f0c36a;
+  color: #1b160c;
+}
+
+html[data-mode="basic"] .fov,
+html[data-mode="basic"] .look-bar,
+html[data-mode="basic"] .look-snaps,
+html[data-mode="basic"] .toggles,
+html[data-mode="basic"] .pollution-hud,
+html[data-mode="basic"] [data-intel] {
+  display: none !important;
+}
+
+#aim {
+  pointer-events: none;
+}
+
+#aim-arrow {
+  position: fixed;
+  z-index: 23;
+  color: #f0c36a;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.55));
+}
+
+html[data-mode="expert"] #aim-arrow svg {
+  width: 54px;
+  height: 54px;
+}
+
+#aim-caption {
+  position: fixed;
+  z-index: 23;
+  left: 50%;
+  bottom: 78px;
+  transform: translateX(-50%);
+  max-width: min(520px, calc(100vw - 32px));
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(16, 18, 28, 0.88);
+  color: #f7f1df;
+  font-size: 16px;
+  text-align: center;
+}
+
+html[data-mode="expert"] #aim-caption {
+  font-size: 13px;
+  bottom: 86px;
+}
+
 @media (max-width: 800px) {
+  #basic-bar {
+    left: 12px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   #intel,
   #intel.intel-nav {
     width: 100%;
