@@ -249,6 +249,12 @@ const Sky = (() => {
   }
 
   function planets(date) {
+    const lat = (loc.lat * 180) / Math.PI;
+    const lon = (loc.lon * 180) / Math.PI;
+    if (loc.located && typeof OrbitaEphemeris !== "undefined") {
+      const exact = OrbitaEphemeris.bodies(date, lat, lon);
+      if (exact) return exact;
+    }
     const n = daysJ2000(date);
     const sun = (280.46 + 0.9856474 * n) * Math.PI / 180;
     const moon = (218.316 + 13.176396 * n) * Math.PI / 180;
@@ -257,12 +263,12 @@ const Sky = (() => {
     const jup = (34.351 + 0.083091 * n) * Math.PI / 180;
     const sat = (50.077 + 0.033461 * n) * Math.PI / 180;
     return [
-      { name: "Sun", ...eclToEq(sun, date), mag: -26, kind: "sun" },
-      { name: "Moon", ...eclToEq(moon, date), mag: -10, kind: "moon" },
-      { name: "Venus", ...eclToEq(venus, date), mag: -4.0, kind: "planet" },
-      { name: "Mars", ...eclToEq(mars, date), mag: 0.8, kind: "planet" },
-      { name: "Jupiter", ...eclToEq(jup, date), mag: -2.2, kind: "planet" },
-      { name: "Saturn", ...eclToEq(sat, date), mag: 0.6, kind: "planet" },
+      { name: "Sun", ...eclToEq(sun, date), mag: -26, kind: "sun", source: "mean-longitude" },
+      { name: "Moon", ...eclToEq(moon, date), mag: -10, kind: "moon", source: "mean-longitude" },
+      { name: "Venus", ...eclToEq(venus, date), mag: -4.0, kind: "planet", source: "mean-longitude" },
+      { name: "Mars", ...eclToEq(mars, date), mag: 0.8, kind: "planet", source: "mean-longitude" },
+      { name: "Jupiter", ...eclToEq(jup, date), mag: -2.2, kind: "planet", source: "mean-longitude" },
+      { name: "Saturn", ...eclToEq(sat, date), mag: 0.6, kind: "planet", source: "mean-longitude" },
     ];
   }
 

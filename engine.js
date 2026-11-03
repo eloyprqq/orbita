@@ -1,5 +1,5 @@
 /* Orbita intelligence engine.
-   Altitudes, planets, and moon phase all reuse sky.js approximations.
+   Planet, Moon, and Sun positions come from Sky.bodiesAt (Astronomy Engine when loaded).
    Scores are a recommendation index, not a measured success probability.
    Bortle remains the place-type estimate from app.js. */
 const OrbitaEngine = (() => {
@@ -153,7 +153,9 @@ const OrbitaEngine = (() => {
     const moonAlt = Sky.altAzAt(moon.ra, moon.dec, date).alt;
     const sunAlt = Sky.altAzAt(sun.ra, sun.dec, date).alt;
     const elong = angularSep(moon.ra, moon.dec, sun.ra, sun.dec);
-    const illum = (1 - Math.cos((elong * Math.PI) / 180)) / 2;
+    const illum = Number.isFinite(moon.illum)
+      ? moon.illum
+      : (1 - Math.cos((elong * Math.PI) / 180)) / 2;
     return { bodies, moonAlt, sunAlt, illum, elong };
   }
 

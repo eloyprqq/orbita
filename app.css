@@ -1053,8 +1053,9 @@ body {
   left: 200px;
   right: 12px;
   display: none;
+  flex-direction: column;
   gap: 8px;
-  align-items: center;
+  align-items: flex-start;
 }
 
 html[data-mode="basic"] #basic-bar {
@@ -1062,7 +1063,7 @@ html[data-mode="basic"] #basic-bar {
 }
 
 #basic-bar p {
-  flex: 0 1 280px;
+  max-width: 720px;
   margin: 0;
   color: #d5d9e6;
   font-size: 13px;

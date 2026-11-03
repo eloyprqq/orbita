@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>orbita</title>
-    <link rel="stylesheet" href="app.css?v=13" />
+    <link rel="stylesheet" href="app.css?v=14" />
   </head>
   <body>
     <canvas id="sky"></canvas>
@@ -78,7 +78,7 @@
     <div class="scrim" id="scrim" hidden></div>
 
     <div id="basic-bar">
-      <p>찾을 별을 고르세요. 화살표는 노트북 화면 기준으로 그 별이 어느 쪽인지 알려 줍니다.</p>
+      <p>이 화면이 지금 노트북으로 보는 하늘입니다. 화살표의 왼쪽·오른쪽은 나침반이 아니라 이 화면의 왼쪽·오른쪽입니다.</p>
       <div id="basic-picks"></div>
     </div>
 
@@ -238,7 +238,7 @@
     <section class="panel" id="panel-about" hidden>
       <h3>orbita</h3>
       <p>촬영한 하늘과 보이는 별자리로 빛 공해를 가늠하고, 지금 하늘에서 가장 잘 보이는 별자리를 알려 주는 관측 시뮬레이터입니다.</p>
-      <p>Forecast, Matrix, Navigator, Mission은 메뉴와 OBSERVE에서 엽니다. 고도와 점수는 근사 계산입니다.</p>
+      <p>Forecast, Matrix, Navigator, Mission은 메뉴와 OBSERVE에서 엽니다. 태양·달·행성은 Astronomy Engine으로 계산하고, 별은 앱에 저장된 좌표입니다. 점수는 관측 성공 확률이 아닙니다.</p>
     </section>
 
     <div id="intro">
@@ -267,17 +267,19 @@
         <button type="button" data-tab="mission">Mission</button>
       </div>
       <p class="intel-disclaimer">
-        고도, 행성·달 위치, 달 위상, 관측 지표는 이 앱의 근사 모델입니다. 천문력과 다를 수 있고, 관측 성공 확률이 아닙니다.
+        태양·달·행성 위치와 달의 밝은 비율은 Astronomy Engine으로 계산합니다. 별 좌표는 앱에 저장된 목록입니다. 점수는 관측 성공 확률이 아닙니다.
         Bortle은 장소 유형으로 추정한 값이며 광공해 지도 실측이 아닙니다.
       </p>
       <div id="intel-body"></div>
     </div>
 
     <script src="catalog.js?v=1"></script>
-    <script src="sky.js?v=15"></script>
-    <script src="engine.js?v=2"></script>
+    <script src="astronomy.browser.min.js?v=2.1.19"></script>
+    <script src="ephemeris.js?v=1"></script>
+    <script src="sky.js?v=17"></script>
+    <script src="engine.js?v=3"></script>
     <script src="missions.js?v=1"></script>
-    <script src="aim.js?v=2"></script>
+    <script src="aim.js?v=3"></script>
     <script src="logo.js?v=16"></script>
     <script src="app.js?v=13"></script>
     <script src="intel.js?v=2"></script>

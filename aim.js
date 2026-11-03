@@ -50,9 +50,9 @@ const OrbitaAim = (() => {
 
   function phrase(horizontal, vertical, off) {
     const side = [vertical, horizontal].filter(Boolean).join(" ");
-    if (!side) return "화면 가운데에 있어요";
-    if (off) return `화면 ${side} 밖에 있어요. 그쪽으로 하늘을 돌려 보세요.`;
-    return `화면 ${side}에 있어요`;
+    if (!side) return "지금 이 노트북 화면 한가운데에 있어요";
+    if (off) return `지금 이 노트북 화면 ${side} 밖에 있어요. 하늘을 그쪽으로 끌어 보세요.`;
+    return `지금 이 노트북 화면 ${side}에 있어요`;
   }
 
   function tick() {
@@ -61,14 +61,14 @@ const OrbitaAim = (() => {
     if (!target || target.ra == null) {
       root.hidden = !basic;
       arrow.hidden = true;
-      caption.textContent = basic ? "찾을 별을 고르면 화면의 어느 쪽인지 화살표로 알려 줍니다." : "";
+      caption.textContent = basic ? "찾을 별을 고르면, 지금 이 화면의 어느 쪽인지 화살표로 알려 줍니다." : "";
       requestAnimationFrame(tick);
       return;
     }
     if (!Sky.isLocated()) {
       root.hidden = false;
       arrow.hidden = true;
-      caption.textContent = "위치를 허용해야 이 화면 기준으로 방향을 알려 줍니다.";
+      caption.textContent = "위치를 허용해야 지금 이 화면 기준으로 방향을 알려 줍니다.";
       requestAnimationFrame(tick);
       return;
     }
@@ -77,7 +77,7 @@ const OrbitaAim = (() => {
     const name = target.name;
     if (aim.below && (aim.forward <= 0.04 || !aim.onScreen)) {
       arrow.hidden = true;
-      caption.textContent = `${name}, 지금은 지평선 아래라 화면에 없어요.`;
+      caption.textContent = `${name}, 지금은 지평선 아래라 이 화면에 없어요.`;
       requestAnimationFrame(tick);
       return;
     }
@@ -90,7 +90,7 @@ const OrbitaAim = (() => {
     const onCenter = aim.onScreen && dist < dead;
     if (onCenter) {
       arrow.hidden = true;
-      caption.textContent = `${name}, 화면 가운데에 있어요`;
+      caption.textContent = `${name}, 지금 이 노트북 화면 한가운데에 있어요`;
       requestAnimationFrame(tick);
       return;
     }
@@ -103,9 +103,17 @@ const OrbitaAim = (() => {
     if (!horizontal && !vertical) horizontal = nx < 0 ? "왼쪽" : "오른쪽";
     const off = !aim.onScreen;
     arrow.hidden = false;
-    const reach = Math.min(aim.w, aim.h) * (basic ? 0.34 : 0.28);
-    const ax = Math.max(56, Math.min(aim.w - 56, cx + nx * reach));
-    const ay = Math.max(108, Math.min(aim.h - 128, cy + ny * reach));
+    let ax;
+    let ay;
+    if (!off && aim.x != null) {
+      ax = aim.x + nx * 36;
+      ay = aim.y + ny * 36;
+    } else {
+      ax = cx + nx * (aim.w * 0.5 - 36);
+      ay = cy + ny * (aim.h * 0.5 - 88);
+    }
+    ax = Math.max(56, Math.min(aim.w - 56, ax));
+    ay = Math.max(108, Math.min(aim.h - 128, ay));
     arrow.style.left = `${ax}px`;
     arrow.style.top = `${ay}px`;
     arrow.style.transform = `translate(-50%, -50%) rotate(${Math.atan2(ny, nx)}rad)`;
