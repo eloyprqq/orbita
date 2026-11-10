@@ -10,6 +10,24 @@ const OrbitaEngine = (() => {
     Mars: "화성",
     Jupiter: "목성",
     Saturn: "토성",
+    Sirius: "시리우스",
+    Canopus: "카노푸스",
+    Arcturus: "아크투루스",
+    Vega: "베가",
+    Capella: "카펠라",
+    Rigel: "리겔",
+    Procyon: "프로키온",
+    Betelgeuse: "베텔게우스",
+    Altair: "알타이르",
+    Aldebaran: "알데바란",
+    Antares: "안타레스",
+    Spica: "스피카",
+    Pollux: "폴룩스",
+    Fomalhaut: "포말하우트",
+    Deneb: "데네브",
+    Regulus: "레굴루스",
+    Polaris: "북극성",
+    Castor: "카스토르",
     "Andromeda Galaxy": "안드로메다은하",
     "Orion Nebula": "오리온 성운",
     Pleiades: "플레이아데스",
@@ -214,6 +232,22 @@ const OrbitaEngine = (() => {
   }
 
   function explain(parts, target, minAlt) {
+    const plain = document.documentElement.dataset.mode !== "expert";
+    if (plain) {
+      const lines = [];
+      if (parts.alt <= 0) lines.push("지금은 지평선 아래라 안 보여요.");
+      else if (parts.alt >= 50) lines.push("하늘 높이 떠 있어서 찾기 쉬워요.");
+      else if (parts.alt < minAlt) lines.push("지평선에 가까워서 건물이나 공기에 가려지기 쉬워요.");
+      else lines.push("보기 괜찮은 높이에 있어요.");
+      if (parts.sunAlt > -6) lines.push("하늘이 아직 밝을 수 있어요.");
+      if (parts.bortle >= 7 && (target.kind === "dso" || target.mag > 2)) {
+        lines.push("주변이 밝아서 어두운 은하는 잘 안 보여요.");
+      }
+      if (target.kind !== "moon" && parts.moonAlt > 15 && parts.illum > 0.55) {
+        lines.push("달이 밝아서 하늘이 뿌예요.");
+      }
+      return lines;
+    }
     const lines = [];
     if (parts.alt <= 0) {
       lines.push("이 시각에는 지평선 아래에 있어 관측할 수 없습니다.");
@@ -324,6 +358,17 @@ const OrbitaEngine = (() => {
       up: ranges(rows, (row) => row.alt > 0),
       good: ranges(rows, (row) => row.alt >= minAlt && row.sunAlt < -6),
     };
+  }
+
+  function nowList(date, limit) {
+    const snap = skyState(date);
+    return catalogTargets()
+      .filter((target) => target.kind !== "sun")
+      .map((target) => ({ target, parts: evaluate(target, date, 15, snap) }))
+      .filter((row) => row.parts.alt >= 12 && row.parts.S >= 30)
+      .filter((row) => row.target.kind !== "star" || row.target.mag <= 1.8)
+      .sort((a, b) => b.parts.S - a.parts.S)
+      .slice(0, limit || 4);
   }
 
   function recommend(start, end, minAlt, limit) {
@@ -477,6 +522,7 @@ const OrbitaEngine = (() => {
     skyState,
     evaluate,
     profile,
+    nowList,
     recommend,
     weekStrip,
     hop,

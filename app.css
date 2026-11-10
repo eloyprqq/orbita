@@ -1046,6 +1046,62 @@ body {
   color: #1b160c;
 }
 
+#tonight {
+  position: fixed;
+  z-index: 22;
+  left: 16px;
+  bottom: 78px;
+  width: min(240px, calc(100vw - 32px));
+  display: none;
+  padding: 10px;
+  border-radius: 16px;
+  background: rgba(12, 14, 24, 0.82);
+  color: #f4f1e6;
+}
+
+html[data-mode="basic"] #tonight:not([hidden]) {
+  display: block;
+}
+
+#tonight > p {
+  margin: 0 0 8px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: #f0c36a;
+}
+
+#tonight-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#tonight-list p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+#tonight-list button {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  border: 0;
+  border-radius: 12px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+  font: 13px/1.2 inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+#tonight-list button span {
+  color: #c5cad8;
+  white-space: nowrap;
+}
+
 #orient-row {
   position: fixed;
   z-index: 22;
@@ -1133,12 +1189,15 @@ html[data-mode="basic"] #basic-bar {
   color: #1b160c;
 }
 
+html[data-mode="basic"] .term-expert,
+html[data-mode="expert"] .term-basic {
+  display: none;
+}
+
 html[data-mode="basic"] .fov,
 html[data-mode="basic"] .look-bar,
 html[data-mode="basic"] .look-snaps,
-html[data-mode="basic"] .toggles,
-html[data-mode="basic"] .pollution-hud,
-html[data-mode="basic"] [data-intel] {
+html[data-mode="basic"] .toggles {
   display: none !important;
 }
 

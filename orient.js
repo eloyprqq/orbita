@@ -275,7 +275,7 @@ const OrbitaOrient = (() => {
     if (!running) return;
     if (!found) {
       running = false;
-      paint("이 브라우저는 노트북 방향 센서를 주지 않습니다. 하늘을 끌어 방향을 맞추세요.");
+      paint("이 노트북은 기울기·나침반을 앱에 넘기지 않습니다. 하늘을 끌어 방향을 맞추세요.");
       return;
     }
     mode = found === "absolute" ? "absolute" : found === "relative" ? "relative" : "tilt";

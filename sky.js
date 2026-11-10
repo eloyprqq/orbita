@@ -328,6 +328,46 @@ const Sky = (() => {
     return 7.6 - loc.bortle * 0.38;
   }
 
+  const STAR_KO = {
+    sirius: "시리우스",
+    vega: "베가",
+    capella: "카펠라",
+    rigel: "리겔",
+    procyon: "프로키온",
+    betelgeuse: "베텔게우스",
+    altair: "알타이르",
+    aldebaran: "알데바란",
+    antares: "안타레스",
+    spica: "스피카",
+    pollux: "폴룩스",
+    deneb: "데네브",
+    regulus: "레굴루스",
+    polaris: "북극성",
+    arcturus: "아크투루스",
+    castor: "카스토르",
+    sun: "태양",
+    moon: "달",
+    venus: "금성",
+    mars: "화성",
+    jupiter: "목성",
+    saturn: "토성",
+    "andromeda galaxy": "안드로메다은하",
+    "orion nebula": "오리온 성운",
+    pleiades: "플레이아데스",
+    beehive: "벌집 성단",
+    whirlpool: "소용돌이 은하",
+    sombrero: "솜브레로 은하",
+    lagoon: "석호 성운",
+    "omega centauri": "오메가 센타우리",
+    hyades: "히아데스",
+  };
+
+  function skyLabel(name, ko) {
+    const basic = document.documentElement.dataset.mode !== "expert";
+    if (!basic) return name;
+    return ko || STAR_KO[String(name).toLowerCase()] || name;
+  }
+
   function drawStar(p, star) {
     const limit = frame.limit;
     if (star.mag > limit) return;
@@ -352,7 +392,7 @@ const Sky = (() => {
     if (star.named && star.mag < 1.7 && state.fov < 100) {
       ctx.globalAlpha = 0.85;
       ctx.font = "12px Segoe UI, sans-serif";
-      ctx.fillText(star.name, p.x + 7, p.y - 6);
+      ctx.fillText(skyLabel(star.name), p.x + 7, p.y - 6);
     }
     ctx.globalAlpha = 1;
   }
@@ -389,7 +429,7 @@ const Sky = (() => {
       if (lab && lab.y > 70 && lab.y < h * 0.7 && state.fov < 110) {
         ctx.fillStyle = "rgba(170,195,230,0.75)";
         ctx.font = "13px Segoe UI, sans-serif";
-        ctx.fillText(c.name, lab.x + 10, lab.y - 10);
+        ctx.fillText(skyLabel(c.name, c.ko), lab.x + 10, lab.y - 10);
       }
     });
   }
@@ -410,7 +450,7 @@ const Sky = (() => {
       if (state.fov < 55) {
         ctx.fillStyle = "rgba(200,210,230,0.7)";
         ctx.font = "11px Segoe UI, sans-serif";
-        ctx.fillText(d.name, p.x + 8, p.y + 4);
+        ctx.fillText(skyLabel(d.name), p.x + 8, p.y + 4);
       }
     });
   }
@@ -443,7 +483,7 @@ const Sky = (() => {
       }
       ctx.fillStyle = "rgba(235,240,250,0.9)";
       ctx.font = "13px Segoe UI, sans-serif";
-      ctx.fillText(pl.name, p.x + 10, p.y - 8);
+      ctx.fillText(skyLabel(pl.name), p.x + 10, p.y - 8);
     });
   }
 

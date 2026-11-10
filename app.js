@@ -246,30 +246,36 @@ function setPollutionUi(bortle, placeName) {
   document.querySelectorAll("#ph-ticks li, #bortle-legend li").forEach((el) => {
     el.classList.toggle("on", located && Number(el.dataset.n) === bortle);
   });
+  const basic = document.documentElement.dataset.mode !== "expert";
   if (!located) {
     hud.classList.remove("live");
-    document.getElementById("ph-bortle").textContent = "Bortle —";
+    document.getElementById("ph-bortle").textContent = basic ? "밝기 —" : "Bortle —";
     document.getElementById("ph-label").textContent = "위치 없음";
-    document.getElementById("ph-meta").textContent = "GPS를 허용하면 이 하늘 기준으로 정도를 계산합니다.";
-    document.getElementById("bortle-big").textContent = "Bortle —";
-    document.getElementById("loc-pollution").textContent = "빛 공해 · 위치 없음";
-    document.getElementById("pollution-mini").textContent = "빛 공해 · 위치 없음";
-    document.getElementById("pollution-text").textContent =
-      "위치를 허용해야 이 자리의 빛 공해와 잘 보이는 별자리를 계산합니다.";
+    document.getElementById("ph-meta").textContent = "위치를 허용하면 이 하늘이 얼마나 밝은지 알려 줍니다.";
+    document.getElementById("bortle-big").textContent = basic ? "밝기 —" : "Bortle —";
+    document.getElementById("loc-pollution").textContent = basic ? "하늘 밝기 · 위치 없음" : "빛 공해 · 위치 없음";
+    document.getElementById("pollution-mini").textContent = basic ? "하늘 밝기 · 위치 없음" : "빛 공해 · 위치 없음";
+    document.getElementById("pollution-text").textContent = basic
+      ? "위치를 허용해야 이 하늘이 얼마나 밝은지, 어떤 별자리가 잘 보이는지 알려 줍니다."
+      : "위치를 허용해야 이 자리의 빛 공해와 잘 보이는 별자리를 계산합니다.";
     return;
   }
   hud.classList.add("live");
-  document.getElementById("ph-bortle").textContent = `Bortle ${bortle}`;
+  document.getElementById("ph-bortle").textContent = basic ? `${bortle}단계` : `Bortle ${bortle}`;
   document.getElementById("ph-label").textContent = BORTLE_LABEL[bortle];
-  document.getElementById("ph-meta").textContent =
-    `한계등급 약 ${mag}등 · ${BORTLE_HINT[bortle]}`;
-  document.getElementById("bortle-big").textContent = `Bortle ${bortle}`;
-  document.getElementById("loc-pollution").textContent =
-    `빛 공해 · Bortle ${bortle} · ${BORTLE_LABEL[bortle]}`;
-  document.getElementById("pollution-mini").textContent =
-    `빛 공해 · Bortle ${bortle} · ${BORTLE_LABEL[bortle]}`;
-  document.getElementById("pollution-text").textContent =
-    `${placeName} 기준 예상 Bortle ${bortle} (${BORTLE_LABEL[bortle]}). 한계등급 약 ${mag}등. ${BORTLE_HINT[bortle]} 이 위치의 하늘을 기준으로 별 밝기를 맞췄습니다.`;
+  document.getElementById("ph-meta").textContent = basic
+    ? BORTLE_HINT[bortle]
+    : `한계등급 약 ${mag}등 · ${BORTLE_HINT[bortle]}`;
+  document.getElementById("bortle-big").textContent = basic ? `${bortle}단계` : `Bortle ${bortle}`;
+  document.getElementById("loc-pollution").textContent = basic
+    ? `하늘 밝기 · ${bortle}단계 · ${BORTLE_LABEL[bortle]}`
+    : `빛 공해 · Bortle ${bortle} · ${BORTLE_LABEL[bortle]}`;
+  document.getElementById("pollution-mini").textContent = basic
+    ? `하늘 밝기 · ${bortle}단계 · ${BORTLE_LABEL[bortle]}`
+    : `빛 공해 · Bortle ${bortle} · ${BORTLE_LABEL[bortle]}`;
+  document.getElementById("pollution-text").textContent = basic
+    ? `${placeName}은 ${BORTLE_LABEL[bortle]}에 가까워요. ${BORTLE_HINT[bortle]}`
+    : `${placeName} 기준 예상 Bortle ${bortle} (${BORTLE_LABEL[bortle]}). 한계등급 약 ${mag}등. ${BORTLE_HINT[bortle]} 이 위치의 하늘을 기준으로 별 밝기를 맞췄습니다.`;
 }
 
 document.getElementById("pollution-hud").addEventListener("click", () => {
@@ -502,6 +508,8 @@ function applyMode(mode) {
   modeExpert.classList.toggle("on", next === "expert");
   searchBox.placeholder = next === "basic" ? "찾을 별 검색" : "Search...";
   localStorage.setItem("orbita.mode", next);
+  if (Sky.isLocated()) setPollutionUi(Sky.getBortle(), document.getElementById("city-name").textContent);
+  if (typeof OrbitaIntel !== "undefined") OrbitaIntel.refresh();
 }
 
 modeBasic.addEventListener("click", () => applyMode("basic"));

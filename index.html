@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>orbita</title>
-    <link rel="stylesheet" href="app.css?v=15" />
+    <link rel="stylesheet" href="app.css?v=17" />
   </head>
   <body>
     <canvas id="sky"></canvas>
@@ -42,10 +42,10 @@
           <button type="button" data-panel="pollution">빛 공해</button>
           <button type="button" data-panel="ranking">잘 보이는 별자리</button>
           <button type="button" data-panel="observe">내 관측</button>
-          <button type="button" data-intel="forecast">Forecast · 언제</button>
-          <button type="button" data-intel="matrix">Matrix · 무엇을</button>
-          <button type="button" data-intel="navigator">Navigator · 어떻게</button>
-          <button type="button" data-intel="mission">Mission · 기록</button>
+          <button type="button" data-intel="forecast"><span class="term-expert">Forecast · 언제</span><span class="term-basic">언제 볼까</span></button>
+          <button type="button" data-intel="matrix"><span class="term-expert">Matrix · 무엇을</span><span class="term-basic">무엇을 볼까</span></button>
+          <button type="button" data-intel="navigator"><span class="term-expert">Navigator · 어떻게</span><span class="term-basic">어떻게 찾을까</span></button>
+          <button type="button" data-intel="mission"><span class="term-expert">Mission · 기록</span><span class="term-basic">기록하기</span></button>
         </div>
       </div>
     </header>
@@ -57,16 +57,16 @@
       </div>
       <nav class="drawer-nav">
         <button type="button" data-intel="forecast">
-          <span class="nav-ico">◷</span> Forecast
+          <span class="nav-ico">◷</span> <span class="term-expert">Forecast</span><span class="term-basic">언제 볼까</span>
         </button>
         <button type="button" data-intel="matrix">
-          <span class="nav-ico">▦</span> Visibility Matrix
+          <span class="nav-ico">▦</span> <span class="term-expert">Visibility Matrix</span><span class="term-basic">무엇을 볼까</span>
         </button>
         <button type="button" data-intel="navigator">
-          <span class="nav-ico">➝</span> Star Navigator
+          <span class="nav-ico">➝</span> <span class="term-expert">Star Navigator</span><span class="term-basic">어떻게 찾을까</span>
         </button>
         <button type="button" data-intel="mission">
-          <span class="nav-ico">☑</span> Mission Control
+          <span class="nav-ico">☑</span> <span class="term-expert">Mission Control</span><span class="term-basic">기록하기</span>
         </button>
       </nav>
       <div class="drawer-foot">
@@ -83,9 +83,14 @@
     </div>
 
     <div id="basic-bar">
-      <p>화살표의 왼쪽·오른쪽은 이 화면 기준입니다. 노트북 방향을 켜면 화면 뒷면이 가리키는 하늘이 나옵니다.</p>
+      <p>별을 누르면 이 화면의 어느 쪽인지 화살표로 알려 줍니다. 메뉴의 기능은 전문가 모드와 같고, 말만 쉽게 바꿨습니다.</p>
       <div id="basic-picks"></div>
     </div>
+
+    <aside id="tonight" hidden>
+      <p>지금 보면 좋은 것</p>
+      <div id="tonight-list"></div>
+    </aside>
 
     <div id="aim" hidden>
       <div id="aim-arrow" aria-hidden="true">
@@ -262,18 +267,18 @@
 
     <div id="intel" hidden>
       <div class="intel-bar">
-        <p class="intel-flow">Forecast → Matrix → Navigator → Mission</p>
+        <p class="intel-flow"><span class="term-expert">Forecast → Matrix → Navigator → Mission</span><span class="term-basic">언제 볼까 → 무엇을 볼까 → 어떻게 찾을까 → 기록하기</span></p>
         <button id="intel-close" type="button">닫기</button>
       </div>
       <div class="intel-tabs">
-        <button type="button" data-tab="forecast">Forecast</button>
-        <button type="button" data-tab="matrix">Matrix</button>
-        <button type="button" data-tab="navigator">Navigator</button>
-        <button type="button" data-tab="mission">Mission</button>
+        <button type="button" data-tab="forecast"><span class="term-expert">Forecast</span><span class="term-basic">언제 볼까</span></button>
+        <button type="button" data-tab="matrix"><span class="term-expert">Matrix</span><span class="term-basic">무엇을 볼까</span></button>
+        <button type="button" data-tab="navigator"><span class="term-expert">Navigator</span><span class="term-basic">어떻게 찾을까</span></button>
+        <button type="button" data-tab="mission"><span class="term-expert">Mission</span><span class="term-basic">기록하기</span></button>
       </div>
       <p class="intel-disclaimer">
-        태양·달·행성 위치와 달의 밝은 비율은 Astronomy Engine으로 계산합니다. 별 좌표는 앱에 저장된 목록입니다. 점수는 관측 성공 확률이 아닙니다.
-        Bortle은 장소 유형으로 추정한 값이며 광공해 지도 실측이 아닙니다.
+        <span class="term-expert">태양·달·행성 위치와 달의 밝은 비율은 Astronomy Engine으로 계산합니다. 별 좌표는 앱에 저장된 목록입니다. 점수는 관측 성공 확률이 아닙니다. Bortle은 장소 유형으로 추정한 값이며 광공해 지도 실측이 아닙니다.</span>
+        <span class="term-basic">점수는 꼭 보인다는 확률이 아니에요. 하늘 밝기는 도시인지 시골인지로 짐작한 값이에요.</span>
       </p>
       <div id="intel-body"></div>
     </div>
@@ -281,13 +286,14 @@
     <script src="catalog.js?v=1"></script>
     <script src="astronomy.browser.min.js?v=2.1.19"></script>
     <script src="ephemeris.js?v=1"></script>
-    <script src="sky.js?v=18"></script>
-    <script src="orient.js?v=1"></script>
-    <script src="engine.js?v=3"></script>
+    <script src="sky.js?v=19"></script>
+    <script src="orient.js?v=2"></script>
+    <script src="engine.js?v=5"></script>
     <script src="missions.js?v=1"></script>
     <script src="aim.js?v=3"></script>
+    <script src="tonight.js?v=2"></script>
     <script src="logo.js?v=16"></script>
-    <script src="app.js?v=13"></script>
-    <script src="intel.js?v=2"></script>
+    <script src="app.js?v=14"></script>
+    <script src="intel.js?v=3"></script>
   </body>
 </html>

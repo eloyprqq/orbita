@@ -23,6 +23,14 @@ const OrbitaIntel = (() => {
     }[ch]));
   }
 
+  function easy() {
+    return document.documentElement.dataset.mode !== "expert";
+  }
+
+  function say(hard, plain) {
+    return easy() ? plain : hard;
+  }
+
   function placeLine() {
     const city = document.getElementById("city-name")?.textContent || "위치 없음";
     const place = Sky.getPlace();
@@ -35,7 +43,9 @@ const OrbitaIntel = (() => {
       bortle: place.bortle,
       lat: place.lat,
       lon: place.lon,
-      text: `${city} · ${place.lat.toFixed(3)}°, ${place.lon.toFixed(3)}° · 추정 Bortle ${place.bortle}`,
+      text: easy()
+        ? `${city} · 하늘 밝기 ${place.bortle}단계`
+        : `${city} · ${place.lat.toFixed(3)}°, ${place.lon.toFixed(3)}° · 추정 Bortle ${place.bortle}`,
     };
   }
 
@@ -79,7 +89,7 @@ const OrbitaIntel = (() => {
   }
 
   function windowText(ranges) {
-    if (!ranges.length) return "이 밤에 기준 고도 위로 올라오지 않습니다.";
+    if (!ranges.length) return say("이 밤에 기준 고도 위로 올라오지 않습니다.", "오늘 밤에는 보기 좋은 높이까지 안 올라와요.");
     return ranges
       .map((range) => `${OrbitaEngine.fmtWhen(range.start)}–${OrbitaEngine.fmtTime(range.end)}`)
       .join(", ");
@@ -101,10 +111,13 @@ const OrbitaIntel = (() => {
     body.innerHTML = `
       <div class="intel-tools">
         <label>날짜 <input id="intel-date" type="date" value="${esc(iso)}" /></label>
-        <label>기준 고도 <input id="intel-alt" type="number" min="5" max="70" step="1" value="${minAlt}" />°</label>
+        <label>${say("기준 고도", "어느 높이부터")} <input id="intel-alt" type="number" min="5" max="70" step="1" value="${minAlt}" />°</label>
         <span class="intel-place">${esc(place.text)}</span>
       </div>
-      <p class="intel-lead">오늘 밤 ${OrbitaEngine.fmtTime(night.start)}–다음날 ${OrbitaEngine.fmtTime(night.end)}. 추천은 근사 고도·밝기·추정 광공해·근사 달빛을 묶은 지표입니다.</p>
+      <p class="intel-lead">${say(
+        `오늘 밤 ${OrbitaEngine.fmtTime(night.start)}–다음날 ${OrbitaEngine.fmtTime(night.end)}. 추천은 근사 고도·밝기·추정 광공해·근사 달빛을 묶은 지표입니다.`,
+        `오늘 저녁 ${OrbitaEngine.fmtTime(night.start)}부터 새벽 ${OrbitaEngine.fmtTime(night.end)}까지예요. 숫자는 성공 확률이 아니라, 보기 좋은 순서예요.`
+      )}</p>
       <div class="intel-split">
         <ol class="intel-list">
           ${cards
@@ -112,14 +125,17 @@ const OrbitaIntel = (() => {
               const on = card.target.id === focusId ? " on" : "";
               return `<li class="${on}">
                 <button type="button" data-act="focus" data-id="${esc(card.target.id)}">
-                  <strong>${esc(OrbitaEngine.fullLabel(card.target))}</strong>
-                  <span>최적 ${OrbitaEngine.fmtWhen(card.best.t)} · 최고 ${card.peak.alt.toFixed(0)}° · 지표 ${card.best.S}</span>
+                  <strong>${esc(easy() ? OrbitaEngine.label(card.target) : OrbitaEngine.fullLabel(card.target))}</strong>
+                  <span>${say(
+                    `최적 ${OrbitaEngine.fmtWhen(card.best.t)} · 최고 ${card.peak.alt.toFixed(0)}° · 지표 ${card.best.S}`,
+                    `가장 좋은 때 ${OrbitaEngine.fmtWhen(card.best.t)} · 높이 ${card.peak.alt.toFixed(0)}°`
+                  )}</span>
                 </button>
                 <p>${esc(card.best.reasons[0] || "")}</p>
                 <div class="intel-row">
-                  <button type="button" data-act="mission-add" data-id="${esc(card.target.id)}" data-t="${card.best.t}">미션에 추가</button>
-                  <button type="button" data-act="compare" data-id="${esc(card.target.id)}">${compareIds.includes(card.target.id) ? "비교 해제" : "그래프 비교"}</button>
-                  <button type="button" data-act="goto-nav" data-id="${esc(card.target.id)}">길 찾기</button>
+                  <button type="button" data-act="mission-add" data-id="${esc(card.target.id)}" data-t="${card.best.t}">${say("미션에 추가", "기록에 넣기")}</button>
+                  <button type="button" data-act="compare" data-id="${esc(card.target.id)}">${compareIds.includes(card.target.id) ? "비교 해제" : say("그래프 비교", "같이 비교")}</button>
+                  <button type="button" data-act="goto-nav" data-id="${esc(card.target.id)}">${say("길 찾기", "찾는 길")}</button>
                 </div>
               </li>`;
             })
@@ -237,20 +253,23 @@ const OrbitaIntel = (() => {
     body.innerHTML = `
       <div class="intel-tools">
         <label>날짜 <input id="intel-date" type="date" value="${esc(iso)}" /></label>
-        <label>기준 고도 <input id="intel-alt" type="number" min="5" max="70" value="${minAlt}" />°</label>
+        <label>${say("기준 고도", "어느 높이부터")} <input id="intel-alt" type="number" min="5" max="70" value="${minAlt}" />°</label>
         ${["star", "planet", "moon", "dso"]
-          .map(
-            (kind) =>
-              `<label><input type="checkbox" data-kind="${kind}" ${kinds[kind] ? "checked" : ""} /> ${kind}</label>`
-          )
+          .map((kind) => {
+            const name = { star: "별", planet: "행성", moon: "달", dso: "성운·은하" }[kind];
+            return `<label><input type="checkbox" data-kind="${kind}" ${kinds[kind] ? "checked" : ""} /> ${say(kind, name)}</label>`;
+          })
           .join("")}
         <span class="intel-place">${esc(place.text)}</span>
       </div>
       <p class="intel-lead">${
         bestCell
-          ? `이 격자에서 지표가 가장 높은 칸은 ${esc(OrbitaEngine.fullLabel(bestCell.target))} ${OrbitaEngine.fmtWhen(bestCell.cell.t)} · ${bestCell.cell.S}입니다.`
+          ? say(
+              `이 격자에서 지표가 가장 높은 칸은 ${esc(OrbitaEngine.fullLabel(bestCell.target))} ${OrbitaEngine.fmtWhen(bestCell.cell.t)} · ${bestCell.cell.S}입니다.`,
+              `지금 표에서 가장 보기 좋은 칸은 ${esc(OrbitaEngine.label(bestCell.target))}, ${OrbitaEngine.fmtWhen(bestCell.cell.t)}예요.`
+            )
           : "표시할 천체가 없습니다."
-      } 칸 점수는 관측 성공 확률이 아닙니다.</p>
+      } ${say("칸 점수는 관측 성공 확률이 아닙니다.", "숫자는 성공 확률이 아니에요.")}</p>
       <div class="matrix-wrap">
         <table class="matrix">
           <thead><tr><th>천체</th>${ticks.map((t) => `<th>${OrbitaEngine.fmtTime(t)}</th>`).join("")}</tr></thead>
@@ -275,9 +294,25 @@ const OrbitaIntel = (() => {
   }
 
   function matrixDetailHtml() {
-    if (!matrixPick) return `<p class="intel-note">칸을 누르면 고도, 밝기, 추정 광공해, 달빛으로 나눈 점수가 열립니다.</p>`;
+    if (!matrixPick) {
+      return `<p class="intel-note">${say(
+        "칸을 누르면 고도, 밝기, 추정 광공해, 달빛으로 나눈 점수가 열립니다.",
+        "칸을 누르면 왜 그 시간에 보기 좋은지 풀어서 알려 줘요."
+      )}</p>`;
+    }
     const target = OrbitaEngine.targetById(matrixPick.id);
     const cell = OrbitaEngine.evaluate(target, new Date(matrixPick.t), minAlt);
+    if (easy()) {
+      return `
+        <h4>${esc(OrbitaEngine.label(target))} · ${OrbitaEngine.fmtWhen(cell.t)}</h4>
+        <p>추천 ${cell.S}. 하늘 높이 ${cell.alt.toFixed(0)}°, 하늘 밝기 ${cell.bortle}단계.</p>
+        <ul class="intel-reasons">${cell.reasons.map((line) => `<li>${esc(line)}</li>`).join("")}</ul>
+        <div class="intel-row">
+          <button type="button" data-act="mission-add" data-id="${esc(target.id)}" data-t="${cell.t}">기록에 넣기</button>
+          <button type="button" data-act="goto-nav" data-id="${esc(target.id)}">찾는 길</button>
+          <button type="button" data-act="goto-forecast" data-id="${esc(target.id)}">시간대 보기</button>
+        </div>`;
+    }
     return `
       <h4>${esc(OrbitaEngine.fullLabel(target))} · ${OrbitaEngine.fmtWhen(cell.t)}</h4>
       <p>종합 지표 ${cell.S}. 가중치 A ${cell.weights.A} / B ${cell.weights.B} / L ${cell.weights.L} / M ${cell.weights.M}</p>
@@ -325,7 +360,10 @@ const OrbitaIntel = (() => {
         <button type="button" data-act="hop-run">다시 계산</button>
       </div>
       ${hopHtml()}
-      <p class="intel-note">경로는 catalog.js 안의 별만 사용합니다. 각거리는 적경·적위 사이 각이고, 비용은 각거리에 어두운 별 패널티를 더한 값입니다. 다익스트라로 비용이 작은 길을 고릅니다.</p>`;
+      <p class="intel-note">${say(
+        "경로는 catalog.js 안의 별만 사용합니다. 각거리는 적경·적위 사이 각이고, 비용은 각거리에 어두운 별 패널티를 더한 값입니다. 다익스트라로 비용이 작은 길을 고릅니다.",
+        "밝은 별에서 다음 밝은 별로 건너가는 길이에요. 하늘 위에 점선으로 보여요."
+      )}</p>`;
   }
 
   function runHop() {
@@ -345,8 +383,8 @@ const OrbitaIntel = (() => {
   function hopHtml() {
     if (!hopResult) return `<p class="intel-empty">목표를 고르면 길을 계산합니다.</p>`;
     if (!hopResult.ok && hopResult.reason === "below") {
-      return `<p class="intel-empty">${esc(OrbitaEngine.fullLabel(hopResult.target))}는 지금 근사 고도 ${hopResult.alt.toFixed(0)}°로 지평선 아래입니다. 안내를 시작하지 않습니다.</p>
-        <button type="button" data-act="goto-forecast" data-id="${esc(hopResult.target.id)}">Forecast에서 뜨는 시각 보기</button>`;
+      return `<p class="intel-empty">${esc(OrbitaEngine.label(hopResult.target))}는 지금 하늘 높이 ${hopResult.alt.toFixed(0)}°라서 지평선 아래예요.</p>
+        <button type="button" data-act="goto-forecast" data-id="${esc(hopResult.target.id)}">${say("Forecast에서 뜨는 시각 보기", "언제 뜨는지 보기")}</button>`;
     }
     if (!hopResult.ok) {
       return `<p class="intel-empty">이 카탈로그의 밝은 별만으로는 이어지는 길을 찾지 못했습니다. 별 목록이 늘어나면 길이 늘어납니다.</p>`;
@@ -432,7 +470,10 @@ const OrbitaIntel = (() => {
   function missionDetail(mission) {
     const prog = OrbitaMissions.progress(mission);
     const place = mission.place
-      ? `${mission.place.name || "위치"} · 추정 Bortle ${mission.place.bortle}`
+      ? say(
+          `${mission.place.name || "위치"} · 추정 Bortle ${mission.place.bortle}`,
+          `${mission.place.name || "위치"} · 하늘 밝기 ${mission.place.bortle}단계`
+        )
       : "위치를 저장하지 않음";
     return `
       <article class="mission">
@@ -740,5 +781,5 @@ const OrbitaIntel = (() => {
     if (!root.hidden) render();
   });
 
-  return { open, close };
+  return { open, close, refresh() { if (!root.hidden) render(); } };
 })();
