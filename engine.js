@@ -420,6 +420,18 @@ const OrbitaEngine = (() => {
       mag: target.mag,
       kind: target.kind,
     };
+    if (Number.isFinite(goal.mag) && goal.mag <= startMag) {
+      return {
+        ok: true,
+        direct: true,
+        steps: [{ ...goal, sep: 0, alt: nowAlt.alt }],
+        total: 0,
+        alt: nowAlt.alt,
+        target,
+        at: pos,
+        mode: easy ? "easy" : "normal",
+      };
+    }
     const nodes = stars.filter((s) => angularSep(s.ra, s.dec, goal.ra, goal.dec) > 0.3);
     nodes.push(goal);
     const edges = new Map();

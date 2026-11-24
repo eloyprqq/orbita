@@ -390,12 +390,15 @@ const OrbitaIntel = (() => {
       return `<p class="intel-empty">이 카탈로그의 밝은 별만으로는 이어지는 길을 찾지 못했습니다. 별 목록이 늘어나면 길이 늘어납니다.</p>`;
     }
     const steps = hopResult.steps;
+    const lead = hopResult.direct
+      ? `${OrbitaEngine.label(steps[0])}. 그 자체로 밝아서 다른 별을 거치지 않고 바로 찾을 수 있어요.`
+      : `총 각거리 약 ${hopResult.total.toFixed(0)}°. ${hopResult.mode === "easy" ? "초보 경로" : "기본 경로"}${hopResult.relaxed ? " · 초보 간격으로는 이어지지 않아 기본 간격으로 다시 찾았습니다" : ""}. 하늘 위에 점선으로 겹칩니다.`;
     return `
-      <p>총 각거리 약 ${hopResult.total.toFixed(0)}°. ${hopResult.mode === "easy" ? "초보 경로" : "기본 경로"}${hopResult.relaxed ? " · 초보 간격으로는 이어지지 않아 기본 간격으로 다시 찾았습니다" : ""}. 하늘 위에 점선으로 겹칩니다.</p>
+      <p>${esc(lead)}</p>
       <ol class="hop-steps">
         ${steps
           .map((step, i) => {
-            const title = i === 0 ? "출발 별 확인" : i === steps.length - 1 ? "목표 위치 확인" : "다음 기준 별";
+            const title = steps.length === 1 ? "바로 찾기" : i === 0 ? "출발 별 확인" : i === steps.length - 1 ? "목표 위치 확인" : "다음 기준 별";
             return `<li class="${i === hopIndex ? "on" : ""}">
               <button type="button" data-act="hop-step" data-i="${i}">
                 <b>${i + 1}. ${esc(title)}</b>
@@ -415,6 +418,7 @@ const OrbitaIntel = (() => {
 
   function stepSentence(step, index, total) {
     if (!step) return "";
+    if (total === 1) return `${OrbitaEngine.fullLabel(step)}. 밝아서 바로 찾을 수 있습니다.`;
     if (index === 0) return `먼저 ${OrbitaEngine.fullLabel(step)}를 찾습니다. 밝은 기준점입니다.`;
     if (index === total - 1) return `마지막입니다. 이전 별에서 약 ${step.sep.toFixed(1)}° 이동하면 ${OrbitaEngine.fullLabel(step)} 방향입니다.`;
     return `${OrbitaEngine.fullLabel(step)} 쪽으로 약 ${step.sep.toFixed(1)}° 이동합니다.`;
