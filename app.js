@@ -1,6 +1,5 @@
 const drawer = document.getElementById("drawer");
 const scrim = document.getElementById("scrim");
-const intro = document.getElementById("intro");
 const observeMenu = document.getElementById("observe-menu");
 const panels = {
   loc: document.getElementById("panel-loc"),
@@ -187,21 +186,6 @@ suggest.addEventListener("click", (e) => {
 document.body.addEventListener("click", (e) => {
   if (!e.target.closest(".search-wrap")) suggest.hidden = true;
 });
-
-function finishIntro() {
-  intro.style.transition = "opacity 0.7s ease";
-  intro.style.opacity = "0";
-  setTimeout(() => {
-    intro.remove();
-  }, 700);
-}
-
-if (new URLSearchParams(location.search).has("skip")) {
-  intro.remove();
-} else {
-  window.onOrbitaIntroDone = finishIntro;
-  document.getElementById("skip").addEventListener("click", finishIntro);
-}
 
 const BORTLE_LABEL = {
   1: "최고 암흑 지대",

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>orbita</title>
-    <link rel="stylesheet" href="app.css?v=17" />
+    <link rel="stylesheet" href="app.css?v=18" />
   </head>
   <body>
     <canvas id="sky"></canvas>
@@ -15,7 +15,9 @@
           <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" />
         </svg>
       </button>
-      <a class="header-brand logo-stage" id="header-logo" data-orbita-logo="header" data-fit-w="640" data-fit-h="220" href="#" aria-label="orbita"></a>
+      <a class="header-brand" id="header-logo" href="#" aria-label="orbita">
+        <img src="logo.png" alt="" />
+      </a>
       <div class="mode-switch" role="group" aria-label="사용 모드">
         <button type="button" id="mode-basic" class="on">기본</button>
         <button type="button" id="mode-expert">전문가</button>
@@ -52,7 +54,7 @@
 
     <aside class="drawer" id="drawer" hidden>
       <div class="drawer-brand">
-        <div class="logo-stage drawer-logo" id="drawer-logo" data-orbita-logo="drawer" data-fit-w="560" data-fit-h="240"></div>
+        <img class="drawer-logo" id="drawer-logo" src="logo.png" alt="ORBITA" />
         <p>밤하늘 관측 시뮬레이터</p>
       </div>
       <nav class="drawer-nav">
@@ -251,20 +253,6 @@
       <p>Forecast, Matrix, Navigator, Mission은 메뉴와 OBSERVE에서 엽니다. 태양·달·행성은 Astronomy Engine으로 계산하고, 별은 앱에 저장된 좌표입니다. 점수는 관측 성공 확률이 아닙니다.</p>
     </section>
 
-    <div id="intro">
-      <div id="stage">
-        <img data-orbit class="orbit" src="orbit.png" alt="" />
-        <img data-letter="o" class="letter letter-o" src="O.png" alt="" />
-        <img data-letter="r" class="letter letter-r" src="R.png" alt="" />
-        <img data-letter="b" class="letter letter-b" src="B.png" alt="" />
-        <img data-letter="i" class="letter letter-i" src="I.png" alt="" />
-        <img data-letter="t" class="letter letter-t" src="T.png" alt="" />
-        <img data-letter="a" class="letter letter-a" src="A.png" alt="" />
-      </div>
-      <button id="replay" type="button">다시 보기</button>
-      <button id="skip" type="button">Skip</button>
-    </div>
-
     <div id="intel" hidden>
       <div class="intel-bar">
         <p class="intel-flow"><span class="term-expert">Forecast → Matrix → Navigator → Mission</span><span class="term-basic">언제 볼까 → 무엇을 볼까 → 어떻게 찾을까 → 기록하기</span></p>
@@ -292,8 +280,7 @@
     <script src="missions.js?v=1"></script>
     <script src="aim.js?v=3"></script>
     <script src="tonight.js?v=2"></script>
-    <script src="logo.js?v=16"></script>
-    <script src="app.js?v=14"></script>
+    <script src="app.js?v=15"></script>
     <script src="intel.js?v=3"></script>
   </body>
 </html>
